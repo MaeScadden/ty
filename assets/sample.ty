@@ -1,0 +1,6 @@
+fn main()
+{
+  let name = "Mae";
+
+  printf("Name: %s", name);
+}
