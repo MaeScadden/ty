@@ -4,3 +4,5 @@ skip-full: false
 check-coverage: true
 exclude:
   - "lib/**/*"
+  - "src/**/*.spec.ts"
+  - "jest.config.js"
