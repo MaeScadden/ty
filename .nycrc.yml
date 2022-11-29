@@ -1,0 +1,6 @@
+extends: "@istanbuljs/nyc-config-typescript"
+all: true
+skip-full: false
+check-coverage: true
+exclude:
+  - "lib/**/*"

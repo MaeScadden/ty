@@ -1,0 +1,23 @@
+root: true
+parser: "@typescript-eslint/parser"
+parserOptions:
+  project: "tsconfig.json"
+  sourceType: "module"
+plugins:
+  - "@typescript-eslint/eslint-plugin"
+  - "eslint-plugin-prettier"
+ignorePatterns:
+  - lib/**/*
+extends:
+  - "eslint-config-prettier"
+  - "eslint:recommended"
+  - "plugin:@typescript-eslint/recommended"
+overrides:
+  - files: ["src/**/*", "features/step_definitions/**/*"]
+env:
+  node: true
+rules:
+  "prettier/prettier":
+    - error
+  "@typescript-eslint/no-non-null-assertion":
+    - off
