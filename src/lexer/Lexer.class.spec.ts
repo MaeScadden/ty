@@ -113,6 +113,11 @@ sdas  12312
         index: 4,
         type: ReservedTokenType.Assignment,
       },
+      {
+        text: ", asd 123 'hello' 'world' =",
+        index: 0,
+        type: ReservedTokenType.Comma,
+      },
     ];
 
     tests.forEach(({ text, index, type }) => {

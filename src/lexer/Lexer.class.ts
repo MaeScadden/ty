@@ -140,6 +140,9 @@ export default class Lexer {
       case "=":
         this.incrementColumn();
         return new Token.Reserved(ReservedTokenType.Assignment);
+      case ",":
+        this.incrementColumn();
+        return new Token.Reserved(ReservedTokenType.Comma);
       default:
         return null;
     }
