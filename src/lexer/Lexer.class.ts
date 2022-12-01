@@ -1,7 +1,7 @@
 import type Option from "../types/Option";
 import OperatorToken, { OperatorType } from "../models/OperatorToken";
 import ReservedToken, { ReservedTokenType } from "../models/ReservedToken";
-import Token, { IToken } from "../models/Token";
+import Token, { TokenType } from "../models/Token";
 import isAlphaNumeric from "./helpers/isAlphaNumeric";
 import isNewLine from "./helpers/isNewLine";
 import isNumber from "./helpers/isNumber";
@@ -24,7 +24,7 @@ export default class Lexer {
   ];
 
   private _cursor = 0;
-  private currentTokenType: Option<typeof Token[keyof typeof Token]> = null;
+  private currentTokenType: Option<TokenType> = null;
   private lineNumber = 1;
   private column = 1;
   private input = "";
@@ -64,9 +64,9 @@ export default class Lexer {
     return this.input.slice(start, end);
   }
 
-  public lex(input: string): IToken[] {
+  public lex(input: string): Token[] {
     this.input = input;
-    const tokens: IToken[] = [];
+    const tokens: Token[] = [];
 
     this.column = 1;
     this.cursor = 0;
@@ -108,7 +108,7 @@ export default class Lexer {
     return tokens;
   }
 
-  private getToken(): Option<IToken> {
+  private getToken(): Option<Token> {
     for (const getter of this.GetTokenOrder) {
       const token = getter();
 
@@ -124,37 +124,43 @@ export default class Lexer {
     switch (this.char) {
       case "(":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.LeftParenth);
+        return new ReservedToken(ReservedTokenType.LeftParenth);
       case ")":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.RightParenth);
+        return new ReservedToken(ReservedTokenType.RightParenth);
       case ";":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.Semi);
+        return new ReservedToken(ReservedTokenType.Semi);
       case "{":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.LeftBracket);
+        return new ReservedToken(ReservedTokenType.LeftBracket);
       case "}":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.RightBracket);
+        return new ReservedToken(ReservedTokenType.RightBracket);
       case "=":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.Assignment);
+        return new ReservedToken(ReservedTokenType.Assignment);
       case ",":
         this.incrementColumn();
-        return new Token.Reserved(ReservedTokenType.Comma);
-      default:
-        return null;
+        return new ReservedToken(ReservedTokenType.Comma);
+      case "f":
+        if (this.next == "n") {
+          this.incrementColumn();
+          this.incrementColumn();
+          return new ReservedToken(ReservedTokenType.Fn);
+        }
     }
+
+    return null;
   }
 
   private getOperator(): Option<OperatorToken> {
     switch (this.char) {
       case "-":
-        this.currentTokenType = Token.Operator;
+        this.currentTokenType = TokenType.Operator;
 
         this.incrementColumn();
-        return new Token.Operator(OperatorType.Subtraction);
+        return new OperatorToken(OperatorType.Subtraction);
       default:
         return null;
     }
@@ -162,7 +168,7 @@ export default class Lexer {
 
   private getString(): Option<StringToken> {
     if (isQoute(this.char)) {
-      this.currentTokenType = Token.String;
+      this.currentTokenType = TokenType.String;
 
       const qoute = this.char.slice();
       this.incrementColumn();
@@ -192,7 +198,7 @@ export default class Lexer {
         // eslint-disable-next-line no-constant-condition
       } while (true);
 
-      return new Token.String(this.value);
+      return new StringToken(this.value);
     }
 
     return null;
@@ -200,14 +206,14 @@ export default class Lexer {
 
   private getIdentifier(): Option<IdentifierToken> {
     if (isAlphaNumeric(this.char)) {
-      this.currentTokenType = Token.Identifier;
+      this.currentTokenType = TokenType.Identifier;
 
       do {
         this.value += this.char;
         this.incrementColumn();
       } while (isAlphaNumeric(`${this.value}${this.char}`));
 
-      return new Token.Identifier(this.value);
+      return new IdentifierToken(this.value);
     }
 
     return null;
@@ -215,7 +221,7 @@ export default class Lexer {
 
   private getNumber(): Option<NumberToken> {
     if (isNumber(this.char)) {
-      this.currentTokenType = Token.Number;
+      this.currentTokenType = TokenType.Number;
       let fullstop = false;
 
       do {
@@ -240,7 +246,7 @@ export default class Lexer {
         }
       } while (isNumber(`${this.value}${this.char}`));
 
-      return new Token.Number(+this.value);
+      return new NumberToken(+this.value);
     }
 
     return null;
@@ -248,13 +254,13 @@ export default class Lexer {
 
   private throwUnexpectedEnd() {
     switch (this.currentTokenType) {
-      case Token.String:
+      case TokenType.String:
         throw new LexingStringError(
           this.lineNumber,
           this.column,
           this.currentLine
         );
-      case Token.Number:
+      case TokenType.Number:
         throw new LexingNumberError(
           this.lineNumber,
           this.column,

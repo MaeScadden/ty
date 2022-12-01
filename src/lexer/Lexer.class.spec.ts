@@ -1,9 +1,11 @@
+import IdentifierToken from "../models/IdentifierToken";
 import LexingNumberError from "../models/LexingNumberError";
 import LexingStringError from "../models/LexingStringError";
 import LexingUnsupportedCharacterError from "../models/LexingUnsupportedCharacterError";
-import { OperatorType } from "../models/OperatorToken";
-import { ReservedTokenType } from "../models/ReservedToken";
-import Token from "../models/Token";
+import NumberToken from "../models/NumberToken";
+import OperatorToken, { OperatorType } from "../models/OperatorToken";
+import ReservedToken, { ReservedTokenType } from "../models/ReservedToken";
+import StringToken from "../models/StringToken";
 import Lexer from "./Lexer.class";
 
 describe("Lexer", () => {
@@ -24,8 +26,8 @@ sdas  12312
   it("should return expected Identifier tokens", () => {
     const [first, second] = new Lexer().lex("abc a23 123");
 
-    expect(first).toEqual(new Token.Identifier("abc"));
-    expect(second).toEqual(new Token.Identifier("a23"));
+    expect(first).toEqual(new IdentifierToken("abc"));
+    expect(second).toEqual(new IdentifierToken("a23"));
   });
 
   it("should return expected Number tokens", () => {
@@ -33,17 +35,17 @@ sdas  12312
       "0123 a23 88 -123 123.1 -942.1"
     );
 
-    expect(_0123).toEqual(new Token.Number(123));
-    expect(_88).toEqual(new Token.Number(88));
-    expect(_123).toEqual(new Token.Number(123));
-    expect(_123dot1).toEqual(new Token.Number(123.1));
-    expect(_942dot1).toEqual(new Token.Number(942.1));
+    expect(_0123).toEqual(new NumberToken(123));
+    expect(_88).toEqual(new NumberToken(88));
+    expect(_123).toEqual(new NumberToken(123));
+    expect(_123dot1).toEqual(new NumberToken(123.1));
+    expect(_942dot1).toEqual(new NumberToken(942.1));
   });
 
   it("should return OpMinus token", () => {
     const [, second, , fourth] = new Lexer().lex("asd - 123 - 4");
-    expect(second).toEqual(new Token.Operator(OperatorType.Subtraction));
-    expect(fourth).toEqual(new Token.Operator(OperatorType.Subtraction));
+    expect(second).toEqual(new OperatorToken(OperatorType.Subtraction));
+    expect(fourth).toEqual(new OperatorToken(OperatorType.Subtraction));
   });
 
   describe("should throw LexingNumberError", () => {
@@ -93,7 +95,7 @@ sdas  12312
     });
   });
 
-  describe("Token.Reserved", () => {
+  describe("ReservedToken", () => {
     const tests = [
       {
         text: "asd 123 ( 'hello'",
@@ -118,13 +120,18 @@ sdas  12312
         index: 0,
         type: ReservedTokenType.Comma,
       },
+      {
+        text: ", fn asd 123 'hello' 'world' =",
+        index: 1,
+        type: ReservedTokenType.Fn,
+      },
     ];
 
     tests.forEach(({ text, index, type }) => {
       it(`should correctly identify reserved token \`${type}\` in \`${text}\``, () => {
         const token = new Lexer().lex(text)[index];
 
-        expect(token).toEqual(new Token.Reserved(type));
+        expect(token).toEqual(new ReservedToken(type));
       });
     });
   });
@@ -153,7 +160,7 @@ sdas  12312
       it(`should be successful for \`${str}\``, () => {
         const [token] = new Lexer().lex(str);
 
-        expect(token).toEqual(new Token.String(str.slice(1, -1)));
+        expect(token).toEqual(new StringToken(str.slice(1, -1)));
       });
     });
 
@@ -161,7 +168,7 @@ sdas  12312
       it(`should be successful for string escapes \`${str}\``, () => {
         const [first] = new Lexer().lex(str);
 
-        expect(first).toEqual(new Token.String(str.slice(1, -1)));
+        expect(first).toEqual(new StringToken(str.slice(1, -1)));
       });
     });
 
@@ -170,7 +177,7 @@ sdas  12312
       it(`should be successful for backslash escapes \`${str}\``, () => {
         const [first] = new Lexer().lex(str);
 
-        expect(first).toEqual(new Token.String(str.slice(1, -1)));
+        expect(first).toEqual(new StringToken(str.slice(1, -1)));
       });
     });
   });

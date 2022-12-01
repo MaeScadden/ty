@@ -4,18 +4,19 @@ import OperatorToken from "./OperatorToken";
 import ReservedToken from "./ReservedToken";
 import StringToken from "./StringToken";
 
-const Token = {
-  Number: NumberToken,
-  Identifier: IdentifierToken,
-  Operator: OperatorToken,
-  Reserved: ReservedToken,
-  String: StringToken,
-};
-
-export type IToken =
+type Token =
   | NumberToken
   | IdentifierToken
   | OperatorToken
-  | ReservedToken;
+  | ReservedToken
+  | StringToken;
+
+export enum TokenType {
+  Number,
+  Identifier,
+  Operator,
+  Reserved,
+  String,
+}
 
 export default Token;

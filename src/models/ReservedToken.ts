@@ -6,6 +6,7 @@ export enum ReservedTokenType {
   RightBracket = "}",
   Assignment = "=",
   Comma = ",",
+  Fn = "fn",
 }
 
 export default class ReservedToken {

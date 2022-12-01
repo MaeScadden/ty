@@ -1,6 +1,7 @@
 import { argv } from "node:process";
 import fs from "node:fs/promises";
-import Lexer from "./lexer/Lexer.class";
+import Lexer from "./Lexer/Lexer.class";
+import Lexer from "./AstGenerator/AstGenerator.class";
 
 (async () => {
   try {
