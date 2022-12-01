@@ -9,6 +9,8 @@ export enum ReservedTokenType {
   Fn = "fn",
 }
 
-export default class ReservedToken {
-  public constructor(public readonly type: ReservedTokenType) {}
+export default class ReservedToken<
+  T extends ReservedTokenType = ReservedTokenType
+> {
+  public constructor(public readonly type: T) {}
 }
