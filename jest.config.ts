@@ -3,7 +3,6 @@ import type { Config } from "jest";
 const config: Config = {
   preset: "ts-jest",
   testEnvironment: "node",
-  onlyChanged: true,
   coverageThreshold: {
     global: {
       branches: 100.0,
@@ -15,7 +14,7 @@ const config: Config = {
   bail: 1,
   testTimeout: 1000 * 10,
   coveragePathIgnorePatterns: [
-    // "lib/**",
+    "/lib/",
     // "src/**/*.spec.ts",
     "src/main.ts",
     // "jest.config.js",
