@@ -1,14 +1,21 @@
 import IdentifierToken from "./IdentifierToken";
 import NumberToken from "./NumberToken";
-import OpToken, { OpMinusToken } from "./OpToken";
+import OperatorToken from "./OperatorToken";
+import ReservedToken from "./ReservedToken";
+import StringToken from "./StringToken";
 
 const Token = {
   Number: NumberToken,
   Identifier: IdentifierToken,
-  Operator: OpToken,
-  OpMinus: OpMinusToken,
+  Operator: OperatorToken,
+  Reserved: ReservedToken,
+  String: StringToken,
 };
 
-export type IToken = NumberToken | IdentifierToken | OpToken;
+export type IToken =
+  | NumberToken
+  | IdentifierToken
+  | OperatorToken
+  | ReservedToken;
 
 export default Token;

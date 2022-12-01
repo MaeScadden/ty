@@ -1,14 +1,15 @@
 import { argv } from "node:process";
 import fs from "node:fs/promises";
-import lex from "./lexer/lex";
+import Lexer from "./lexer/Lexer.class";
 
 (async () => {
   try {
     console.log("Got arguments: %s\n", argv);
+    const lexer = new Lexer();
 
-    const buffer = await fs.readFile("assets/sample.ty");
-    const content = buffer.toString();
-    const lexed = lex(content);
+    const file = await fs.readFile("assets/sample.ty");
+    const lexed = lexer.lex(file.toString());
+
     console.log("-- Lex Result! --");
     console.log(lexed);
     console.log("-----------------");
